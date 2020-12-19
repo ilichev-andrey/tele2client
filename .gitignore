@@ -1,4 +1,8 @@
 .idea
+**/__pycache__
+*.egg-info
+build
 data
+dist
 tests
 venv
