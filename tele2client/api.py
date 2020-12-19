@@ -10,6 +10,14 @@ def create_session(access_token: str = ''):
 
 
 class ApiTele2(object):
+    created_lots_url: str
+    rests_url: str
+    balance_url: str
+    validation_number_url: str
+    auth_url: str
+    session: ClientSession
+    phone_number: str
+
     def __init__(self, session: ClientSession, phone_number: str):
         base_url = f'https://my.tele2.ru/api/subscribers/{phone_number}'
         self.created_lots_url = f'{base_url}/exchange/lots/created'
