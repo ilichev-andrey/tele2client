@@ -1,8 +1,9 @@
+from http import HTTPStatus
 from typing import List
 
 from aiohttp import ClientSession
 
-from tele2client import containers, converter, enums, exceptions, time_utils
+from tele2client import containers, converter, enums, event, exceptions, time_utils
 from tele2client.api import ApiTele2, create_session
 from tele2client.wrappers import LoggerWrap
 
@@ -34,24 +35,25 @@ class Tele2Client(object):
         self.session = create_session(self.access_token.token)
         self.api = ApiTele2(self.session, self.phone_number)
 
-    async def auth(self, sms_code_getter: callable) -> bool:
+    async def auth(self, sms_waiter: event.ValueWaiter) -> bool:
         try:
-            self.access_token = await self._get_access_token(sms_code_getter)
+            self.access_token = await self._get_access_token(sms_waiter)
         except exceptions.BaseTele2ClientException as e:
             LoggerWrap().get_logger().exception(str(e))
             return False
         self._refresh_session()
         return True
 
-    async def _get_access_token(self, sms_code_getter: callable) -> containers.AccessToken:
+    async def _get_access_token(self, sms_waiter: event.ValueWaiter) -> containers.AccessToken:
         await self.api.request_sms_code()
         deadline = time_utils.future_timestamp(self.ENTER_SMS_CODE_TIMEOUT)
         while not time_utils.is_expired_timestamp(deadline):
-            sms_code = sms_code_getter()
+            sms_code = await sms_waiter.wait()
             try:
                 return await self.api.get_access_token(sms_code)
             except exceptions.ApiException as e:
-                LoggerWrap().get_logger().exception(str(e))
+                if e.response.status != HTTPStatus.UNAUTHORIZED:
+                    LoggerWrap().get_logger().exception(str(e))
                 continue
 
         raise exceptions.TimeExpired('Истекло время на получение токена достута')
