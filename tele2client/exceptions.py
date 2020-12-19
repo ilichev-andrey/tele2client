@@ -22,10 +22,16 @@ class ApiException(BaseTele2ClientException):
     request_json: Dict
     response: ClientResponse
 
-    def __init__(self, message: str, response: ClientResponse, request_json: Dict = None, *args, **kwargs):
-        super().__init__(message, args, kwargs)
+    def __init__(self, message: str, response: ClientResponse, request_json: Dict = None):
+        super().__init__(message)
         self.request_json = request_json
         self.response = response
+
+    def __str__(self):
+        return f'{super().__str__()}\nrequest_json={self.request_json}\nresponse: {self._response_to_str()}'
+
+    def _response_to_str(self):
+        return f'status={self.response.status} ({self.response.reason}) content={self.response.content}'
 
 
 class IncorrectFormatResponse(BaseTele2ClientException):
