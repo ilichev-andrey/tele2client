@@ -2,7 +2,7 @@ from typing import Dict, Iterable, Tuple, List, NoReturn
 
 from dateutil import parser
 
-from tele2client import containers, exceptions, time_utils
+from tele2client import containers, converter, exceptions, time_utils
 from tele2client.enums import LotStatus, RemainType, RemainStatus, TrafficType, Unit
 
 
@@ -33,7 +33,7 @@ def load_access_token(data: Dict) -> containers.AccessToken:
 
     return containers.AccessToken(
         token=data['access_token'],
-        expired_dt=time_utils.timestamp2datetime(time_utils.future(data['expires_in']))
+        expired_dt=time_utils.timestamp2datetime(time_utils.future_timestamp(data['expires_in']))
     )
 
 
@@ -53,11 +53,18 @@ def load_lot_cost(data: Dict) -> containers.LotCost:
 
 
 def load_lot_info(data: Dict) -> containers.LotInfo:
+    """
+    :raises:
+        FailedConversion: if failed to convert data
+    """
+
     _assert_keys(data, ('id', 'seller', 'trafficType', 'cost', 'status', 'creationDate'))
+    traffic_type = TrafficType(data['trafficType'])
     return containers.LotInfo(
         id=data['id'],
         seller=load_seller_lot(data['seller']),
-        traffic_type=TrafficType(data['trafficType']),
+        type=converter.get_lot_type_by_traffic_type(traffic_type),
+        traffic_type=traffic_type,
         cost=load_lot_cost(data['cost']),
         status=LotStatus(data['status']),
         create_dt=parser.parse(data['creationDate'])

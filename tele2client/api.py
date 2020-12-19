@@ -30,7 +30,7 @@ class ApiTele2(object):
 
         raise exceptions.ApiException(f'Не удалось получить токен для: {self.phone_number}', response, request_json)
 
-    async def request_sms(self) -> NoReturn:
+    async def request_sms_code(self) -> NoReturn:
         request_json = request_creator.create_for_request_sms()
         response = await self.session.post(self.validation_number_url, json=request_json)
         if not response.ok:
@@ -45,7 +45,7 @@ class ApiTele2(object):
         raise exceptions.ApiException(f'Не удалось получить баланс для: {self.phone_number}', response)
 
     async def create_lot(self, lot: containers.Lot) -> containers.LotInfo:
-        request_json = request_creator.create_for_create_lot(lot)
+        request_json = request_creator.create_for_lot_creation(lot)
         response = await self.session.put(self.created_lots_url, json=request_json)
         if response.ok:
             return response_loader.load_lot_info(response_loader.get_data(await response.json()))

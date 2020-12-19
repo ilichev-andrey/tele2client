@@ -8,16 +8,20 @@ def set_tim_zone():
     os.environ['TZ'] = 'Europe/Moscow'
 
 
-def now() -> float:
+def now_timestamp() -> float:
     return time()
 
 
-def is_expired(time_us: float) -> bool:
-    return now() - time_us > 0
+def is_expired(dt: datetime) -> bool:
+    return datetime.now() >= dt
 
 
-def future(time_us: float) -> float:
-    return now() + time_us
+def is_expired_timestamp(time_us: float) -> bool:
+    return now_timestamp() >= time_us
+
+
+def future_timestamp(time_us: float) -> float:
+    return now_timestamp() + time_us
 
 
 def timestamp2datetime(timestamp: int or float) -> datetime:

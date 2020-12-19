@@ -2,8 +2,15 @@ from enum import Enum
 
 
 class TrafficType(Enum):
-    MINUTES = 'voice'
+    VOICE = 'voice'
     INTERNET = 'data'
+    SMS = 'sms'
+
+
+class LotType(Enum):
+    INTERNET = 'internet'
+    VOICE = 'voice'
+    SMS = 'sms'
 
 
 class LotStatus(Enum):
@@ -25,6 +32,7 @@ class Unit(Enum):
     MEGABYTES = 'mb'
     GIGABYTES = 'gb'
     MINUTES = 'min'
+    SMS = 'sms'
 
 
 class Emoji(Enum):

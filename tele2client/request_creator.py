@@ -35,9 +35,13 @@ def create_for_request_sms() -> Dict:
     return {'sender': 'Tele2'}
 
 
-def create_for_create_lot(lot: containers.Lot) -> Dict:
+def create_for_lot_creation(lot: containers.Lot) -> Dict:
+    """
+    :raises:
+       FailedConversion: if failed to convert data
+    """
     return {
-        'trafficType': lot.type.value,
+        'trafficType': converter.get_traffic_type_by_lot_type(lot.type),
         'cost': {'amount': lot.cost, 'currency': 'rub'},
         'volume': {'value': lot.count, 'uom': lot.count_unit.value}
     }

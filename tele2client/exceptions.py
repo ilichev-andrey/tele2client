@@ -36,3 +36,8 @@ class IncorrectFormatResponse(BaseTele2ClientException):
 class TimeExpired(BaseTele2ClientException):
     """Истекло время выполнения"""
     pass
+
+
+class FailedConversion(BaseTele2ClientException):
+    """Не удалось преоразовать данные"""
+    pass

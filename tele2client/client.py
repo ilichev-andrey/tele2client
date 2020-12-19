@@ -44,9 +44,9 @@ class Tele2Client(object):
         return True
 
     async def _get_access_token(self, sms_code_getter: callable) -> containers.AccessToken:
-        await self.api.request_sms()
-        deadline = time_utils.future(self.ENTER_SMS_CODE_TIMEOUT)
-        while not time_utils.is_expired(deadline):
+        await self.api.request_sms_code()
+        deadline = time_utils.future_timestamp(self.ENTER_SMS_CODE_TIMEOUT)
+        while not time_utils.is_expired_timestamp(deadline):
             sms_code = sms_code_getter()
             try:
                 return await self.api.get_access_token(sms_code)
@@ -106,6 +106,6 @@ class Tele2Client(object):
             elif remain.unit == enums.Unit.MEGABYTES:
                 counter.increment_gigabytes(converter.megabytes2gigabytes(remain.value))
             else:
-                LoggerWrap().get_logger().warning('Не известная единица измерения', remain)
+                LoggerWrap().get_logger().warning('Неизвестная единица измерения', remain)
 
         return counter
