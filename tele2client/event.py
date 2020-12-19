@@ -15,6 +15,6 @@ class ValueWaiter(object):
         self._event.clear()
         return self._value
 
-    async def set(self, value: Any):
+    def set(self, value: Any):
         self._value = value
         self._event.set()
