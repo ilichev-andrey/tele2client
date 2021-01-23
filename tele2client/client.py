@@ -120,16 +120,6 @@ class Tele2Client(object):
         """
         return await self.api.get_lots()
 
-    async def get_active_lots(self) -> List[containers.LotInfo]:
-        """
-        :raises:
-            ApiException: если не удалось выполнить запрос
-            IncorrectFormatResponse: если не удалось загрузить данные из ответа
-            FailedConversion: если не удалось преобразовать данные из ответа
-        """
-        lots = await self.get_lots()
-        return [lot_info for lot_info in lots if lot_info.status == enums.LotStatus.ACTIVE]
-
     async def get_rests(self) -> List[containers.Remain]:
         """
         Получить остатки тарифа
