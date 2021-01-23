@@ -14,7 +14,7 @@ def megabytes2gigabytes(megabytes):
 def get_traffic_type_by_lot_type(lot_type: enums.LotType) -> enums.TrafficType:
     """
     :raises:
-        FailedConversion: if incorrect lot_type
+        FailedConversion: если некоректный тип лота
     """
     if lot_type == enums.LotType.INTERNET:
         return enums.TrafficType.INTERNET
@@ -28,7 +28,7 @@ def get_traffic_type_by_lot_type(lot_type: enums.LotType) -> enums.TrafficType:
 def get_lot_type_by_traffic_type(traffic_type: enums.TrafficType) -> enums.LotType:
     """
     :raises:
-        FailedConversion: if incorrect traffic_type
+        FailedConversion: если некоректный тип трафика
     """
     if traffic_type == enums.TrafficType.INTERNET:
         return enums.LotType.INTERNET
@@ -37,3 +37,7 @@ def get_lot_type_by_traffic_type(traffic_type: enums.TrafficType) -> enums.LotTy
     if traffic_type == enums.TrafficType.SMS:
         return enums.LotType.SMS
     raise exceptions.FailedConversion('Некорректный тип трафика лота', traffic_type)
+
+
+def lot_volume2dict(lot_volume: containers.LotVolume) -> Dict:
+    return {'value': lot_volume.count, 'uom': lot_volume.unit.value}

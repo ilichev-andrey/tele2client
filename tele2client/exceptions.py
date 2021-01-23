@@ -18,7 +18,7 @@ class IncorrectPhoneNumber(InputDataException):
 
 
 class ApiException(BaseTele2ClientException):
-    """Не удачное выполнение API-метода"""
+    """Неудачное выполнение API-метода"""
     request_json: Dict
     response: ClientResponse
 

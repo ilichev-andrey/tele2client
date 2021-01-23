@@ -38,10 +38,11 @@ def create_for_request_sms() -> Dict:
 def create_for_lot_creation(lot: containers.Lot) -> Dict:
     """
     :raises:
-       FailedConversion: if failed to convert data
+       FailedConversion: если не удалось преобразовать данные
     """
+    traffic_type = converter.get_traffic_type_by_lot_type(lot.type)
     return {
-        'trafficType': converter.get_traffic_type_by_lot_type(lot.type),
+        'trafficType': traffic_type.value,
         'cost': {'amount': lot.cost, 'currency': 'rub'},
-        'volume': {'value': lot.count, 'uom': lot.count_unit.value}
+        'volume': converter.lot_volume2dict(lot.volume)
     }

@@ -30,6 +30,12 @@ class ApiTele2(object):
         self.phone_number = phone_number
 
     async def get_access_token(self, sms_code: str) -> containers.AccessToken:
+        """
+        :raises:
+            ApiException: если не удалось выполнить запрос
+            IncorrectFormatResponse: если не удалось загрузить данные из ответа
+        """
+
         request_json = request_creator.create_for_access(self.phone_number, sms_code)
         response = await self.session.post(self.auth_url, data=request_json)
 
@@ -39,6 +45,11 @@ class ApiTele2(object):
         raise exceptions.ApiException(f'Не удалось получить токен для: {self.phone_number}', response, request_json)
 
     async def request_sms_code(self) -> NoReturn:
+        """
+        :raises:
+            ApiException: если не удалось выполнить запрос
+        """
+
         request_json = request_creator.create_for_request_sms()
         response = await self.session.post(self.validation_number_url, json=request_json)
         if not response.ok:
@@ -46,6 +57,12 @@ class ApiTele2(object):
             raise exceptions.ApiException(message, response, request_json)
 
     async def get_balance(self) -> float:
+        """
+        :raises:
+            ApiException: если не удалось выполнить запрос
+            IncorrectFormatResponse: если не удалось загрузить данные из ответа
+        """
+
         response = await self.session.get(self.balance_url)
         if response.ok:
             return response_loader.load_balance(response_loader.get_data(await response.json()))
@@ -53,6 +70,13 @@ class ApiTele2(object):
         raise exceptions.ApiException(f'Не удалось получить баланс для: {self.phone_number}', response)
 
     async def create_lot(self, lot: containers.Lot) -> containers.LotInfo:
+        """
+        :raises:
+           ApiException: если не удалось выполнить запрос
+           IncorrectFormatResponse: если не удалось загрузить данные из ответа
+           FailedConversion: если не удалось создать тело запроса
+        """
+
         request_json = request_creator.create_for_lot_creation(lot)
         response = await self.session.put(self.created_lots_url, json=request_json)
         if response.ok:
@@ -61,6 +85,13 @@ class ApiTele2(object):
         raise exceptions.ApiException(f'Не удалось создать лот для: {self.phone_number}', response, request_json)
 
     async def edit_lot(self, lot_info: containers.LotInfo) -> containers.LotInfo:
+        """
+        :raises:
+           ApiException: если не удалось выполнить запрос
+           IncorrectFormatResponse: если не удалось загрузить данные из ответа
+           FailedConversion: если не удалось преобразовать данные из ответа
+        """
+
         request_json = request_creator.create_for_edit_lot(lot_info)
         response = await self.session.put(self._get_lot_url(lot_info.id), json=request_json)
 
@@ -78,6 +109,13 @@ class ApiTele2(object):
         return f'{self.created_lots_url}/{lot_id}'
 
     async def get_lots(self) -> List[containers.LotInfo]:
+        """
+        :raises:
+            ApiException: если не удалось выполнить запрос
+            IncorrectFormatResponse: если не удалось загрузить данные из ответа
+            FailedConversion: если не удалось преобразовать данные из ответа
+        """
+
         response = await self.session.get(self.created_lots_url)
         if response.ok:
             return response_loader.load_lots_info(response_loader.get_data(await response.json()))
@@ -85,7 +123,14 @@ class ApiTele2(object):
         raise exceptions.ApiException(f'Не удалось получить лоты для: {self.phone_number}', response)
 
     async def get_rests(self) -> List[containers.Remain]:
-        """Получение остатков тарифа"""
+        """
+        Получить остатки тарифа
+
+        :raises:
+            ApiException: если не удалось выполнить запрос
+            IncorrectFormatResponse: если не удалось загрузить данные из ответа
+        """
+
         response = await self.session.get(self.rests_url)
         if response.ok:
             return response_loader.load_rests(response_loader.get_data(await response.json()))

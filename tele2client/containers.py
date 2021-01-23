@@ -9,10 +9,14 @@ class AccessToken(NamedTuple):
     expired_dt: datetime = None
 
 
+class LotVolume(NamedTuple):
+    count: int
+    unit: enums.Unit
+
+
 class Lot(NamedTuple):
     type: enums.LotType
-    count: int
-    count_unit: enums.Unit
+    volume: LotVolume
     cost: int
 
 
@@ -31,6 +35,7 @@ class LotInfo(NamedTuple):
     seller: SellerLot
     type: enums.LotType
     traffic_type: enums.TrafficType
+    volume: LotVolume
     cost: LotCost
     status: enums.LotStatus
     create_dt: datetime
@@ -57,6 +62,9 @@ class RemainCounter(object):
 
     def __repr__(self):
         return f'{self.__class__.__name__}(minutes={self.minutes}, gigabytes={self.gigabytes}, sms={self.sms})'
+
+    def __ne__(self, other: 'RemainCounter'):
+        return self.minutes != other.minutes and self.gigabytes != other.gigabytes and self.sms != other.sms
 
     def increment_minutes(self, minutes: int):
         self.minutes += int(minutes)
