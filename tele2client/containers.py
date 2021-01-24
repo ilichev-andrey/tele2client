@@ -46,31 +46,3 @@ class Remain(NamedTuple):
     status: enums.RemainStatus
     value: int
     unit: enums.Unit
-
-
-class RemainCounter(object):
-    __slots__ = ('minutes', 'gigabytes', 'sms')
-
-    minutes: int
-    gigabytes: float
-    sms: int
-
-    def __init__(self, minutes: int = 0, gigabytes: float = 0.0, sms: int = 0):
-        self.minutes = minutes
-        self.gigabytes = gigabytes
-        self.sms = sms
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}(minutes={self.minutes}, gigabytes={self.gigabytes}, sms={self.sms})'
-
-    def __ne__(self, other: 'RemainCounter'):
-        return self.minutes != other.minutes and self.gigabytes != other.gigabytes and self.sms != other.sms
-
-    def increment_minutes(self, minutes: int):
-        self.minutes += int(minutes)
-
-    def increment_gigabytes(self, gigabytes: float):
-        self.gigabytes += float(gigabytes)
-
-    def increment_sms(self, sms: int):
-        self.sms += int(sms)

@@ -3,10 +3,9 @@ from typing import Any, Callable, Coroutine, List
 
 from aiohttp import ClientSession
 
-from tele2client import containers, converter, enums, exceptions, time_utils
+from tele2client import containers, enums, exceptions, time_utils
 from tele2client.api import ApiTele2, create_session
 from tele2client.wrappers import LoggerWrap
-
 
 SmsCodeGetterType = Callable[[], Coroutine[Any, Any, str]]
 
@@ -130,23 +129,11 @@ class Tele2Client(object):
         """
         return await self.api.get_rests()
 
-    async def get_sellable_rests(self) -> containers.RemainCounter:
+    async def get_sellable_rests(self) -> List[containers.Remain]:
         """
         :raises:
             ApiException: если не удалось выполнить запрос
             IncorrectFormatResponse: если не удалось загрузить данные из ответа
         """
         rests = await self.get_rests()
-        counter = containers.RemainCounter()
-        for remain in rests:
-            if remain.type != enums.RemainType.TARIFF:
-                continue
-
-            if remain.unit == enums.Unit.MINUTES:
-                counter.increment_minutes(remain.value)
-            elif remain.unit == enums.Unit.MEGABYTES:
-                counter.increment_gigabytes(converter.megabytes2gigabytes(remain.value))
-            else:
-                LoggerWrap().get_logger().warning('Неизвестная единица измерения', remain)
-
-        return counter
+        return [remain for remain in rests if remain.type == enums.RemainType.TARIFF]
