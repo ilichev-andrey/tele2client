@@ -124,12 +124,13 @@ def load_remain(data: Dict) -> containers.Remain:
     :raises:
         IncorrectFormatResponse: если отсутствуют параметры
     """
-    _assert_keys(data, ('type', 'status', 'remain', 'uom'))
+    _assert_keys(data, ('type', 'rollover', 'status', 'remain', 'uom'))
     return containers.Remain(
         type=RemainType(data['type']),
-        status=RemainStatus('active'),
+        status=RemainStatus(data['status']),
         value=data['remain'],
-        unit=Unit(data['uom'])
+        unit=Unit(data['uom']),
+        rollover=data['rollover']
     )
 
 

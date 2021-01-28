@@ -136,4 +136,4 @@ class Tele2Client(object):
             IncorrectFormatResponse: если не удалось загрузить данные из ответа
         """
         rests = await self.get_rests()
-        return [remain for remain in rests if remain.type == enums.RemainType.TARIFF]
+        return [remain for remain in rests if remain.type == enums.RemainType.TARIFF and not remain.rollover]

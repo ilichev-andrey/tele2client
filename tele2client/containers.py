@@ -46,3 +46,4 @@ class Remain(NamedTuple):
     status: enums.RemainStatus
     value: int
     unit: enums.Unit
+    rollover: bool
